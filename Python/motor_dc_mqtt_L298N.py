@@ -1,4 +1,31 @@
-import paho.mqtt.client as mqtt # Import the MQTT library
+# Control de un motor de corriente directa, variando su voltaje por mqtt
+# Por: Francisco Alejandro Alaffita Hernández
+# Fecha: 8 de junio de 2022
+#
+# Materiales necesarios
+# 1. Archivo read_RPM.py
+# 2. Puente H, L298N
+# 3. Motor de corriente directa de 12v con encoder
+# 4. Fuente de 12 v
+#
+# Este programa recibe un valor de 0 a 100% por mqtt, el cual representa el porcentaje
+# del voltaje total suministrado al motor por medio del shield L298N.
+# Este programa envía el voltaje solicitado al L298N y el motor de corriente directa
+# comienza a girar, el programa comienza a medir las RPM por medio del encoder que viene
+# integrado con el motor y envía éstas RPM's por medio de mqtt.
+#
+# Se espera acoplar este programa con Node-Red, el cual tendrá el control del motor por medio
+# de los porcentajes de voltaje suministrados, todo el control es a través de mqtt
+#
+# Raspberry     L298N
+#     23  -------In2
+#     24  -------In1
+#     25  -------en
+#     GND -------GND
+#
+
+
+import paho.mqtt.client as mqtt # Importa la libreria MQTT 
 import RPi.GPIO as GPIO          
 from time import sleep
 import pigpio
@@ -6,16 +33,17 @@ from read_RPM import reader # Archivo read_RPM contiene a la clase reader
 
 def messageFunction (client, userdata, message):
     topic = str(message.topic)
-    message = int(message.payload.decode("utf-8"))
+    message = int(message.payload.decode("utf-8")) # transformamos el mensaje de texto a entero
     print(message)
-    p.ChangeDutyCycle(message)
+    p.ChangeDutyCycle(message) # Aquí ocurre la magia para el cambio de voltaje
 
 broker_address="35.157.61.99" # IP de hivemq
-ourClient = mqtt.Client("makerio_mqtt") # Create a MQTT client object
-ourClient.connect(broker_address, 1883) # Connect to the test MQTT broker
-ourClient.subscribe("house/bulbs/bulb1") # Subscribe to the topic AC_unit
-ourClient.on_message = messageFunction # Attach the messageFunction to subscription
-ourClient.loop_start() # Start the MQTT client
+ourClient = mqtt.Client("Alex_Alaffita") # Crea un objeto para el cliente de mqtt
+ourClient.connect(broker_address, 1883) # Este nos conecta al broker, también funciona con la
+                                    # url es decir "hivemq.com"
+ourClient.subscribe("capstone/salon/virtual") # El topic para suscribirnos
+ourClient.on_message = messageFunction # Para pegar el mensaje dentro de la variable
+ourClient.loop_start() # Para comenzar el cliente de mqtt
 
 # Pines de conexión con el shield L298N
 in1 = 24 
@@ -25,9 +53,9 @@ en = 25
 
 GPIO.setmode(GPIO.BCM) # Para fijar el modo para los pines
 
-GPIO.setup(in1,GPIO.OUT) # Definimos a in1 como de salida
-GPIO.setup(in2,GPIO.OUT) # Definimos a in2 como de salida
-GPIO.setup(en,GPIO.OUT)  # Definimos a en como de salida
+GPIO.setup(in1,GPIO.OUT) # Definimos a in1 como de salida en raspberry
+GPIO.setup(in2,GPIO.OUT) # Definimos a in2 como de salida en raspberry
+GPIO.setup(en,GPIO.OUT)  # Definimos a en como de salida en raspberry
 GPIO.output(in1,GPIO.LOW)# Para estar seguros que el motor se detiene antes de comenzar 
 GPIO.output(in2,GPIO.LOW)# Para estar seguros que el motor se detiene antes de comenzar
 p=GPIO.PWM(en,1000) # La frecuencia para el pulso PWM en el pin en, de la variable p
