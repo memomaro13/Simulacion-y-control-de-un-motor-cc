@@ -32,11 +32,17 @@ import pigpio
 from read_RPM import reader # Archivo read_RPM contiene a la clase reader
 
 def messageFunction (client, userdata, message):
+    global x
     topic = str(message.topic)
     message = int(message.payload.decode("utf-8")) # transformamos el mensaje de texto a entero
-    print(message)
-    p.ChangeDutyCycle(message) # Aquí ocurre la magia para el cambio de voltaje
-
+    if message>=0 and message <=100:
+        print(message)
+        p.ChangeDutyCycle(message) # Aquí ocurre la magia para el cambio de voltaje
+    elif message==-1:
+        x=-1
+    else:
+        print('El porcentaje debe estar entre 0 y 100')
+        
 broker_address="35.157.61.99" # IP de hivemq
 ourClient = mqtt.Client("Alex_Alaffita") # Crea un objeto para el cliente de mqtt
 ourClient.connect(broker_address, 1883) # Este nos conecta al broker, también funciona con la
@@ -61,8 +67,8 @@ GPIO.output(in2,GPIO.LOW)# Para estar seguros que el motor se detiene antes de c
 p=GPIO.PWM(en,1000) # La frecuencia para el pulso PWM en el pin en, de la variable p
 p.start(25) # Para comenzar con el 25% con el movimiento del motor
 print("\n")
-print("The default speed & direction of motor is LOW & Forward.....")
-print("r-run s-stop f-forward b-backward l-low m-medium h-high e-exit")
+print("Recuerda que debes de suministrar un porcentaje del voltaje (entre 0 y 100)")
+print("Esperando...")
 print("\n")    
 
 cont=0  #Contador de pulsos
@@ -80,22 +86,21 @@ ppc=334 # Pulsos por ciclo, el encoder tiene 334 marcas en la rueda
 tach = reader(pi, RPM_GPIO,ppc) # Función de lectura del encoder, se especifica la variable
                                 # El pin en donde se encuentra y los pulsos por ciclo
 
-#Iniciamos el motor de dc con el 25% del voltaje total (12 v) 
+#Iniciamos el motor de dc con el 0% del voltaje total (12 v) 
  
 GPIO.output(in1,GPIO.HIGH)
 GPIO.output(in2,GPIO.LOW)
-p.ChangeDutyCycle(25)
-x='1'
-while(1):
+p.ChangeDutyCycle(0)
+x=1
+while(x==1):
         
     rpm = tach.RPM() # Función para leer las rpm
     print(rpm)
     ourClient.subscribe("capstone/salon/virtual/voltaje") # Subscribe message to MQTT broker
     ourClient.publish("capstone/salon/virtual/RPM",str(rpm)) # Publish message to MQTT broker
     sleep(SAMPLE_TIME) # Tiempo de espera entre cada lectura
-#    if x=='1':
-#        break
-print("stop")
+
+print("Fin del programa, ¡¡¡Saludos!!!")
 GPIO.output(in1,GPIO.LOW)
 GPIO.output(in2,GPIO.LOW)
 GPIO.cleanup() # Limpiamos todos los pines
