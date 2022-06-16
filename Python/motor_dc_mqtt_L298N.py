@@ -24,6 +24,20 @@
 #     GND -------GND
 #
 
+from luma.core.interface.serial import i2c
+from luma.core.render import canvas
+from luma.oled.device import sh1106
+import socket
+from PIL import ImageFont, ImageDraw, Image
+
+#Para la pantalla
+serial = i2c(port=1, address=0x3c)
+#device = ssd1306(serial, rotate=0)
+device = sh1106(serial, width=128, height=64, rotate=0)
+#device.capabilities(width=128, height=64, rotate=0)
+print("size: " , device.bounding_box)
+device.clear()
+
 
 import paho.mqtt.client as mqtt # Importa la libreria MQTT 
 import RPi.GPIO as GPIO          
@@ -43,7 +57,7 @@ def messageFunction (client, userdata, message):
     else:
         print('El porcentaje debe estar entre 0 y 100')
         
-broker_address="35.157.61.99" # IP de hivemq
+broker_address="18.157.172.72" # IP de hivemq
 ourClient = mqtt.Client("Alex_Alaffita") # Crea un objeto para el cliente de mqtt
 ourClient.connect(broker_address, 1883) # Este nos conecta al broker, también funciona con la
                                     # url es decir "hivemq.com"
@@ -99,6 +113,12 @@ while(x==1):
     ourClient.subscribe("capstone/salon/virtual/voltaje") # Subscribe message to MQTT broker
     ourClient.publish("capstone/salon/virtual/RPM",str(rpm)) # Publish message to MQTT broker
     sleep(SAMPLE_TIME) # Tiempo de espera entre cada lectura
+    with canvas(device) as draw:
+        draw.rectangle(device.bounding_box, outline="white", fill="black")
+    #font = ImageFont.load_default(size=12)
+    #font = ImageFont.truetype(, size=12)
+        draw.text((30, 20), "Código IoT", fill="white",size=23)
+        draw.text((10, 30),str(rpm), fill="white",fontsize=19)
 
 print("Fin del programa, ¡¡¡Saludos!!!")
 GPIO.output(in1,GPIO.LOW)
