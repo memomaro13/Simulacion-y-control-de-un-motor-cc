@@ -24,27 +24,13 @@
 #     GND -------GND
 #
 
-from luma.core.interface.serial import i2c
-from luma.core.render import canvas
-from luma.oled.device import sh1106
-import socket
-from PIL import ImageFont, ImageDraw, Image
-
-#Para la pantalla
-serial = i2c(port=1, address=0x3c)
-#device = ssd1306(serial, rotate=0)
-device = sh1106(serial, width=128, height=64, rotate=0)
-#device.capabilities(width=128, height=64, rotate=0)
-print("size: " , device.bounding_box)
-device.clear()
-
 
 import paho.mqtt.client as mqtt # Importa la libreria MQTT 
 import RPi.GPIO as GPIO          
 from time import sleep
 import pigpio
 from read_RPM import reader # Archivo read_RPM contiene a la clase reader
-
+# Definición de la clase para la lectura de los mensages de mqtt
 def messageFunction (client, userdata, message):
     global x
     topic = str(message.topic)
@@ -113,12 +99,7 @@ while(x==1):
     ourClient.subscribe("capstone/salon/virtual/voltaje") # Subscribe message to MQTT broker
     ourClient.publish("capstone/salon/virtual/RPM",str(rpm)) # Publish message to MQTT broker
     sleep(SAMPLE_TIME) # Tiempo de espera entre cada lectura
-    with canvas(device) as draw:
-        draw.rectangle(device.bounding_box, outline="white", fill="black")
-    #font = ImageFont.load_default(size=12)
-    #font = ImageFont.truetype(, size=12)
-        draw.text((30, 20), "Código IoT", fill="white",size=23)
-        draw.text((10, 30),str(rpm), fill="white",fontsize=19)
+    
 
 print("Fin del programa, ¡¡¡Saludos!!!")
 GPIO.output(in1,GPIO.LOW)
