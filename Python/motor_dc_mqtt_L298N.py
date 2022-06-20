@@ -23,7 +23,7 @@
 #     25  -------en
 #     GND -------GND
 #
-
+# Librerias para la pantalla Oled
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import sh1106
@@ -38,11 +38,15 @@ device = sh1106(serial, width=128, height=64, rotate=0)
 print("size: " , device.bounding_box)
 device.clear()
 
-
+# Librerias para MQTT
 import paho.mqtt.client as mqtt # Importa la libreria MQTT 
-import RPi.GPIO as GPIO          
+
+#Librerias para los pines de entrada
+import RPi.GPIO as GPIO
 from time import sleep
 import pigpio
+
+# Libreria para obtener las RPM's
 from read_RPM import reader # Archivo read_RPM contiene a la clase reader
 
 def messageFunction (client, userdata, message):
