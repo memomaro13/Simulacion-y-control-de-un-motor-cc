@@ -15,7 +15,7 @@
         "topic": "capstone/salon/virtual/voltaje",
         "qos": "2",
         "datatype": "auto",
-        "broker": "9a12a1fd0f38df46",
+        "broker": "c68050189c58070d",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -136,7 +136,7 @@
         "topic": "capstone/salon/virtual/RPM",
         "qos": "2",
         "datatype": "auto",
-        "broker": "9a12a1fd0f38df46",
+        "broker": "c68050189c58070d",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -150,12 +150,12 @@
         ]
     },
     {
-        "id": "9a12a1fd0f38df46",
+        "id": "c68050189c58070d",
         "type": "mqtt-broker",
-        "name": "localhost",
-        "broker": "127.0.0.1",
+        "name": "hivemq",
+        "broker": "35.157.99.2",
         "port": "1883",
-        "clientid": "ivan-CP-94297",
+        "clientid": "ivan-SIC-94297",
         "autoConnect": true,
         "usetls": false,
         "protocolVersion": "4",
@@ -175,4 +175,5 @@
         "willMsg": {},
         "sessionExpiry": ""
     }
+]
 ]
