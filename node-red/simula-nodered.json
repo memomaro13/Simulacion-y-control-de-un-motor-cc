@@ -1,0 +1,179 @@
+[
+    {
+        "id": "d451658bea50c2e8",
+        "type": "tab",
+        "label": "Flow 7",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "53071bf084f49635",
+        "type": "mqtt in",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "topic": "capstone/salon/virtual/voltaje",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "c68050189c58070d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "78707409e3395711"
+            ]
+        ]
+    },
+    {
+        "id": "78707409e3395711",
+        "type": "json",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "404c4d0a2237e9d1",
+                "b24cd1521c12370a"
+            ]
+        ]
+    },
+    {
+        "id": "201f33cd404596ef",
+        "type": "json",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 220,
+        "wires": [
+            [
+                "aea05193f7503e74",
+                "0349867a510168cc"
+            ]
+        ]
+    },
+    {
+        "id": "404c4d0a2237e9d1",
+        "type": "function",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "func": "msg.payload = msg.payload.voltaje;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b24cd1521c12370a",
+        "type": "debug",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "0349867a510168cc",
+        "type": "function",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "func": "msg.payload = msg.payload.RPM;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "aea05193f7503e74",
+        "type": "debug",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "77181953a5be1134",
+        "type": "mqtt in",
+        "z": "d451658bea50c2e8",
+        "name": "",
+        "topic": "capstone/salon/virtual/RPM",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "c68050189c58070d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "201f33cd404596ef"
+            ]
+        ]
+    },
+    {
+        "id": "c68050189c58070d",
+        "type": "mqtt-broker",
+        "name": "hivemq",
+        "broker": "35.157.99.2",
+        "port": "1883",
+        "clientid": "ivan-SIC-94297",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    }
+]
+]

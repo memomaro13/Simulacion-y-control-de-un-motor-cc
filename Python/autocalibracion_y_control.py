@@ -48,7 +48,7 @@ import pigpio
 
 # Libreria para cosas de mate
 import numpy as np
-
+from sklearn import linear_model
 # Libreria para obtener las RPM's
 from read_RPM import reader # Archivo read_RPM contiene a la clase reader
 Vin=0
@@ -58,11 +58,13 @@ def messageFunction (client, userdata, message):
     topic = str(message.topic)
     message = int(message.payload.decode("utf-8")) # transformamos el mensaje de texto a entero
     if message>=0 and message <=100:
-        print(message)
+        #print(message)
         Vin=12*message/100
         p.ChangeDutyCycle(message) # Aquí ocurre la magia para el cambio de voltaje
     elif message==-1:
         x=-1
+    elif message==-2:
+        x=-2
     else:
         print('El porcentaje debe estar entre 0 y 100')
         
@@ -119,16 +121,45 @@ x=1
 # Cálculo  de la simulación
 t=0;
 b=7.10639123732791
-while(x==1):
+caux=81088.9809185961
+A=np.array([[1,1],[0,-b]])
+k1=0;
+k2=0;
+while(x==1 or x==-2):
         
     rpm = tach.RPM() # Función para leer las rpm
-    print(rpm)
+    #print(rpm)
     ourClient.subscribe("capstone/salon/virtual/voltaje") # Subscribe message to MQTT broker
     ourClient.publish("capstone/salon/virtual/RPM",str(rpm)) # Publish message to MQTT broker    
-    c=(81088.9809185961)*Vin/12
-    k1=0;
-    k2=0;
-    A=np.array([[1,1],[0,-b]])
+    if x==-2:
+        i=0
+        p.ChangeDutyCycle(100)
+        w=np.zeros(200)
+        w2=np.zeros(198)
+        while i<200:
+            w[i]=tach.RPM()
+            if i>0 and i<199:
+                w2[i-1]=w[i]
+            i=i+1
+            sleep(0.01)
+        i=1
+        dw=np.zeros(198)
+        while i<199:
+            dw[i-1]=(w[i+1]-w[i-1])/0.02
+            i=i+1
+        p.ChangeDutyCycle(0)
+    # Creo un modelo de regresión lineal
+        modelo = linear_model.LinearRegression()
+    # Entreno el modelo con los datos (X,Y)
+        modelo.fit(w2.reshape(-1,1), dw)
+        print(modelo.coef_[0])
+        print(modelo.intercept_)
+        x=1       
+        b=-modelo.coef_[0]
+        A=np.array([[1,1],[0,-b]])
+        print(A)
+        caux=modelo.intercept_
+    c=(caux)*Vin/12
     B=np.array([[k1],[k2-c/b]])
     invA=np.linalg.inv(A)
     CC=np.dot(invA,B)
@@ -136,9 +167,10 @@ while(x==1):
 # en matlab
 
     dy=(c/b)-b*CC[1]*np.exp(-b*t)
+    
     t=t+0.1;
     ourClient.publish("capstone/salon/virtual/RPMsim",str(dy[0]))
-    print(dy)
+    #print(dy)
     sleep(SAMPLE_TIME) # Tiempo de espera entre cada lectura
     with canvas(device) as draw:
         draw.rectangle(device.bounding_box, outline="white", fill="black")
