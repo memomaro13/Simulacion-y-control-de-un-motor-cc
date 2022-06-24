@@ -13,7 +13,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import pigpio
 from read_RPM import reader
-
+import numpy as np
 # Pines de conexión con el shield L298N
 in1 = 24 
 in2 = 23
@@ -45,12 +45,33 @@ p.ChangeDutyCycle(0)
 RPM_GPIO = 6 # Pin del que vamos a leer
 SAMPLE_TIME = 0.01 # Tiempo de muestreo
 pi = pigpio.pi() # Creación de nuestra variable para las RPM
-pi.set_servo_pulsewidth(6, 2000) # Maximum throttle.
-sleep(2)
-pi.set_servo_pulsewidth(6, 1000) # Minimum throttle.
-sleep(2)
+# pi.set_servo_pulsewidth(6, 2000) # Maximum throttle.
+# sleep(2)
+# pi.set_servo_pulsewidth(6, 1000) # Minimum throttle.
+# sleep(2)
 
 tach = reader(pi, RPM_GPIO,334,0,0) # Creación de la clase reader, el 334 son los pulsos por ciclo
+
+Vin=12
+b=7.10639123732791
+c=(81088.9809185961)*Vin/12
+k1=0;
+k2=0;
+A=np.array([[1,1],[0,-b]])
+B=np.array([[k1],[k2-c/b]])
+invA=np.linalg.inv(A)
+CC=np.dot(invA,B)
+# Recuerda que los indices comienzan en 0, así que CC[1] es CC[2]
+# en matlab
+t=0;
+dy=(c/b)-b*CC[1]*np.exp(-b*t)
+print(dy)
+# dy=(c/b)-b*CC(2)*exp(-b*t);
+
+#Simulación por ecuaciones diferenciales
+
+
+
 
 i=0
 x=100
@@ -68,6 +89,9 @@ while i<200:
     #    break
     p.ChangeDutyCycle(int(x)) # Cambiamos el porcentaje de voltaje (0-100)
     i=i+1
+    dy=(c/b)-b*CC[1]*np.exp(-b*t)
+    print(dy[0])
+    t=t+0.01;
 
 print("Fin del programa, ¡¡¡Saludos!!!")
 #Para asegurarnos de apagar el motor
