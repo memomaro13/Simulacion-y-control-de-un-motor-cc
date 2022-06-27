@@ -133,21 +133,25 @@ while(x==1 or x==-2):
     ourClient.publish("capstone/salon/virtual/RPM",str(rpm)) # Publish message to MQTT broker    
     if x==-2:
         i=0
-        p.ChangeDutyCycle(100)
-        w=np.zeros(200)
-        w2=np.zeros(198)
+        p.ChangeDutyCycle(100) # Ponemos a velocidad máxima al motor
+        w=np.zeros(200) # Creamos el vector w con 200 elementos de sólo ceros 
+        w2=np.zeros(198) # Igual que en w
+        
+        # Esta sección es para tomar las 200 muestras de velocidad
         while i<200:
-            w[i]=tach.RPM()
+            w[i]=tach.RPM() # Aqui llenamos el vector w con las velocidades
             if i>0 and i<199:
-                w2[i-1]=w[i]
+                w2[i-1]=w[i] # Hacemos una copia de w pero sin el primer y el último término
             i=i+1
-            sleep(0.01)
-        i=1
-        dw=np.zeros(198)
+            sleep(0.01) # Tiempo de muestreo entre cada toma de velocidad
+        i=1 # Reiniciamos el contador i
+        dw=np.zeros(198) # Creamos ell vector dw (velocidad de w)
+        
+        # El siguiente fragmento de código calcula la derivada central numérica para w
         while i<199:
-            dw[i-1]=(w[i+1]-w[i-1])/0.02
+            dw[i-1]=(w[i+1]-w[i-1])/0.02 # Diferencias centrales
             i=i+1
-        p.ChangeDutyCycle(0)
+        p.ChangeDutyCycle(0) # Apaga el motor después de dos segundos a funcionamiento máximo
     # Creo un modelo de regresión lineal
         modelo = linear_model.LinearRegression()
     # Entreno el modelo con los datos (X,Y)
@@ -159,16 +163,18 @@ while(x==1 or x==-2):
         A=np.array([[1,1],[0,-b]])
         print(A)
         caux=modelo.intercept_
+    # Cálculo de los coeficientes para la ecuación diferencial
     c=(caux)*Vin/12
     B=np.array([[k1],[k2-c/b]])
-    invA=np.linalg.inv(A)
-    CC=np.dot(invA,B)
+    invA=np.linalg.inv(A) # Inversa de la matriz A
+    CC=np.dot(invA,B) # Producto de matrices (A^-1)B
 # Recuerda que los indices comienzan en 0, así que CC[1] es CC[2]
 # en matlab
 
-    dy=(c/b)-b*CC[1]*np.exp(-b*t)
+    dy=(c/b)-b*CC[1]*np.exp(-b*t) # Solución de la ecuación diferencial con todas las constantes
     
     t=t+0.1;
+    # Publicación con MQTT de la solución a la ecuación diferencial.
     ourClient.publish("capstone/salon/virtual/RPMsim",str(dy[0]))
     #print(dy)
     sleep(SAMPLE_TIME) # Tiempo de espera entre cada lectura
