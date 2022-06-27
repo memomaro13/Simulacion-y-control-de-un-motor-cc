@@ -4,7 +4,7 @@ El objetivo es el control de un motor de corriente contínua por wifi
 Está organizado de la siguiente manera:
 
 Curso:
-      Esta carpeta contiene los documentos para hacer las conexiones y cada una de las lecciones para lograr hacer el circuito y los programas para controlar el motor de corriente contínua.\n 
+      Esta carpeta contiene los documentos para hacer las conexiones y cada una de las lecciones para lograr hacer el circuito y los programas para controlar el motor de corriente contínua.
       1. Conectando la Raspberry pi 4 al módulo L298N y motor de Corriente directa
       2. Medir velocidad desde el encoder del motor
       3. Control del Motor via MQTT
