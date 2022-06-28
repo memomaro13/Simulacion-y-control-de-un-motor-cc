@@ -14,10 +14,10 @@ Está organizado de la siguiente manera:
       Contiene todas las imagenes y los circuitos usadas en los documentos que se encuentran en la carpeta Curso en formato png y de fritzing en el caso de los circuitos.
 
 # Python:
-      Contiene los programas en python de manera desglosada, es decir, dependiendo en que etapa te encuentres del curso es el archivo necesario, es decir, si vas a conectar el motor entonces necesitas el archivo: solo_motor_raspberry.py
-si vas a conectar el encoder y el motor necesitas el archivo: velocidad_RPM.py y read_RPM.py
-si vas a controlar el motor desde mqtt necesitas el archivo: velocidad_voltaje_mqtt.py
-si vas a conectar sólo la pantalla necesitas el archivo: pantalla_oled.py
+      Contiene los programas en python de manera desglosada, es decir, dependiendo en que etapa te encuentres del curso es el archivo necesario, es decir, >si vas a conectar el motor entonces necesitas el archivo: solo_motor_raspberry.py
+>si vas a conectar el encoder y el motor necesitas el archivo: velocidad_RPM.py y read_RPM.py
+>si vas a controlar el motor desde mqtt necesitas el archivo: velocidad_voltaje_mqtt.py
+>si vas a conectar sólo la pantalla necesitas el archivo: pantalla_oled.py
 
 
 
