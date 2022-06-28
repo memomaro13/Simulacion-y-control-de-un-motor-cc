@@ -25,4 +25,4 @@ Está organizado de la siguiente manera:
 
 
 Este repositorio contiene todos los archivos necesarios para llevar a cabo el proyecto capstone: "Control y simulación de un motor de corriente contínua por wifi".
-![This is an image]([https://myoctocat.com/assets/images/base-octocat.svg](https://github.com/AlexAlaffita/Simulacion-y-control-de-un-motor-cc/blob/main/Imagenes/circuito_motor_encoder_L298N_pantalla_bb.png))
+![This is an image](https://raw.githubusercontent.com/AlexAlaffita/Simulacion-y-control-de-un-motor-cc/main/Imagenes/circuito_motor_encoder_L298N_pantalla_bb.png)
